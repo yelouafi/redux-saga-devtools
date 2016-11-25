@@ -19,7 +19,7 @@ const store = createStore(
 )
 sagaMiddleware.run(rootSaga)
 sagaMiddleware.run(function* anotherSaga() {
-  yield taake('SOMETHING')
+  yield take('SOMETHING')
 })
 
 

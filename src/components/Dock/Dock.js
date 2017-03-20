@@ -9,6 +9,8 @@ import {
     DockPanelBody
 } from './styles'
 
+const KEY_CODE_F9=120
+
 class Dock extends React.Component {
 
     node = null
@@ -19,7 +21,7 @@ class Dock extends React.Component {
         isResizing: false
     }
 
-    handleKeyUp = (e) => ((e.keyCode === 119) ? this.onToggleDock() : null)
+    handleKeyUp = (e) => ((e.keyCode === KEY_CODE_F9) ? this.onToggleDock() : null)  //F9
 
     componentDidMount = () => document.addEventListener('keyup', this.handleKeyUp)
 

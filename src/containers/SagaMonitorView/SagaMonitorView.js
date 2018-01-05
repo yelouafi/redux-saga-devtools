@@ -9,7 +9,8 @@ import {
   SagaMonitorContainer,
   SagaMonitorHeader,
   SagaMonitorOption,
-  SagaMonitorBody
+  SagaMonitorBody,
+  FilterEffect
 } from './styles'
 
 const EFFECT_VIEW = 'Effects'
@@ -22,7 +23,8 @@ class SagaMonitorView extends React.Component {
 
   state = {
     currentView: EFFECT_VIEW,
-    currentViewIndex: 0
+    currentViewIndex: 0,
+    filter: { word: '', type: undefined }
   }
 
   viewHandlers = {
@@ -30,10 +32,14 @@ class SagaMonitorView extends React.Component {
     [ACTION_VIEW]: () => this.setState({ currentView: ACTION_VIEW, currentViewIndex: 1 })
   }
 
+  updateFilter = () => this.setState(({ filter }) => (
+    { filter: { ...filter, word: this.filter.value } }
+  ))
+
   renderCurrentView() {
     switch (this.state.currentView) {
       case EFFECT_VIEW:
-        return <EffectView rootEffectIds={this.props.rootEffectIds} />
+        return <EffectView rootEffectIds={this.props.rootEffectIds} filter={this.state.filter} />
       case ACTION_VIEW:
         return <ActionView />
       default:
@@ -62,6 +68,11 @@ class SagaMonitorView extends React.Component {
             <Row>
               {this.renderViewOption(EFFECT_VIEW)}
               {this.renderViewOption(ACTION_VIEW)}
+              <FilterEffect
+                onChange={this.updateFilter}
+                innerRef={filter => this.filter = filter}
+                placeholder="filter..."
+              />
               <hr style={{ width: OPTION_WIDTH, left: OPTION_WIDTH * this.state.currentViewIndex }} />
             </Row>
           </SagaMonitorHeader>

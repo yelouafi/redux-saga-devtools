@@ -51,7 +51,6 @@ class EffectEntry extends React.Component {
     const {effect, collapsed, pinned, hasChildren, passFilter} = this.props
 
     let pinNode
-    console.log(effect)
     if(!effect.root) {
       pinNode = (
         pinned

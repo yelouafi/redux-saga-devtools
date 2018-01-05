@@ -31,8 +31,7 @@ const effectTypes = ['take', 'put', 'fork', 'call', 'cps', 'join', 'cancel']
 class EffectList extends React.Component {
 
   state = {
-    collapsedEffects: {},
-    filter: { word: 'a', type: undefined }
+    collapsedEffects: {}
   }
 
   isCollapsed = effectId => {
@@ -40,7 +39,7 @@ class EffectList extends React.Component {
   }
 
   isFiltered = effectId => {
-    const { filter } = this.state
+    const { filter } = this.props
 
     if (!filter.word) return true
 
@@ -65,7 +64,6 @@ class EffectList extends React.Component {
       })
     }
 
-    console.log(data)
     return data.name && data.name.toLowerCase().includes(filter.word.toLowerCase())
   }
 
@@ -189,6 +187,7 @@ EffectList.propTypes = {
   selectedEffectId: PropTypes.number,
   onSelectionChange: PropTypes.func.isRequired,
   rootEffectIds: PropTypes.array.isRequired,
+  filter: PropTypes.object.isRequired,
   // Injected by redux
   effectsById: PropTypes.object.isRequired,
   effectsByParentId: PropTypes.object.isRequired,

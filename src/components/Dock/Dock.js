@@ -16,7 +16,7 @@ class Dock extends React.Component {
     node = null
 
     state = {
-        visible: false,
+        visible: true,
         width: 500,
         isResizing: false
     }

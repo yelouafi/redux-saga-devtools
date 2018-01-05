@@ -18,12 +18,23 @@ class Effect extends React.Component {
 
   effectId = this.props.effect.effectId
 
+  highlightText = (text) => {
+    const highlight = this.props.filter
+    // Split on higlight term and include term into parts, ignore case
+    let parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return <span> { parts.map((part, i) =>
+        <span key={i} style={part.toLowerCase() === highlight.toLowerCase() ? { fontWeight: 'bold', background: '#ffcc00' } : {} }>
+            { part }
+        </span>)
+    } </span>;
+  }
+
   renderResult(status, result, error, winner) {
     return <Result status={status} result={result} error={error} winner={winner} />
   }
 
   render() {
-    const {effect} = this.props
+    const {effect, filter} = this.props
     const { status, result, error, winner } = effect
 
     let nodes = []
@@ -31,7 +42,7 @@ class Effect extends React.Component {
 
     if(effect.root) {
       nodes = nodes.concat(
-        renderFuncCall(effect.effect.saga, effect.effect.args),
+        renderFuncCall(effect.effect.saga, effect.effect.args, this.highlightText),
         this.renderResult(status, result, error)
       )
     }
@@ -39,7 +50,11 @@ class Effect extends React.Component {
     else if((data = asEffect.take(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('take'),
-        <SagaValue value={data.pattern || data.channel} isIdentifier={true} />,
+        <SagaValue
+          value={this.highlightText(data.pattern || data.channel)}
+          isIdentifier={true}
+          highlighted={true}
+        />,
         this.renderResult(status, result, error, winner)
       )
     }
@@ -47,14 +62,19 @@ class Effect extends React.Component {
     else if((data = asEffect.put(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('put'),
-        <SagaValue value={data.channel || data.action} label={data.action.type} isIdentifier={true} />
+        <SagaValue
+          value={this.highlightText(data.channel || data.action)}
+          label={this.highlightText(data.action.type)}
+          isIdentifier={true}
+          highlighted={true}
+        />
       )
     }
 
     else if((data = asEffect.call(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('call'),
-        renderFuncCall(data.fn, data.args),
+        renderFuncCall(data.fn, data.args, this.highlightText),
         this.renderResult(status, result, error, winner)
       )
     }
@@ -70,7 +90,7 @@ class Effect extends React.Component {
     else if((data = asEffect.fork(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('fork'),
-        renderFuncCall(data.fn, data.args),
+        renderFuncCall(data.fn, data.args, this.highlightText),
         this.renderResult(status, result, error, winner)
       )
     }
@@ -78,7 +98,7 @@ class Effect extends React.Component {
     else if((data = asEffect.join(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('join'),
-        <SagaValue value={data} isIdentifier={true} label={data.name} />,
+        <SagaValue value={data} isIdentifier={true} label={this.highlightText(data.name)} />,
         this.renderResult(status, result, error, winner)
       )
     }
@@ -86,7 +106,7 @@ class Effect extends React.Component {
     else if((data = asEffect.cancel(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('cancel'),
-        <SagaValue value={data} isIdentifier={true} label={data.name} />,
+        <SagaValue value={data} isIdentifier={true} label={this.highlightText(data.name)} />,
       )
     }
 
@@ -171,13 +191,13 @@ function renderEffectType(type) {
   )
 }
 
-function renderFuncCall(fn, args) {
+function renderFuncCall(fn, args, highlighter = val => val) {
   if(!args.length) {
-    return <span>{fn.name}()</span>
+    return <span>{highlighter(fn.name)}()</span>
   }
 
   return [
-    <span>{fn.name}(</span>,
+    <span>{highlighter(fn.name)}(</span>,
     ...renderFuncArgs(args),
     <span>)</span>
   ]
@@ -196,6 +216,7 @@ function renderFuncArgs(args) {
 
 Effect.propTypes = {
   effect: PropTypes.object.isRequired,
+  filter: PropTypes.string.isRequired,
 }
 
 export default Effect

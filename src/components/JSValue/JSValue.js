@@ -12,7 +12,7 @@ import {
 const vnull = <VNull />
 const vfuncKeyword = <Keyword>function</Keyword>
 
-function renderValue(value, isIdentifier, label, onlyPrimitive) {
+function renderValue(value, isIdentifier, label, renderRaw, onlyPrimitive) {
 
   if(value === null || value === undefined) {
     return vnull
@@ -23,7 +23,7 @@ function renderValue(value, isIdentifier, label, onlyPrimitive) {
   }
 
   const type = typeof value
-  if(type === 'string') {
+  if(type === 'string' || renderRaw) {
     if(isIdentifier) {
       return <Identifier>{value}</Identifier>
     } else {
@@ -65,8 +65,8 @@ function getObjectSummary(obj) {
   )
 }
 
-function JSValue({value, isIdentifier, label}) {
-  return renderValue(value, isIdentifier, label, false)
+function JSValue({value, isIdentifier, label, renderRaw}) {
+  return renderValue(value, isIdentifier, label, renderRaw, false)
 }
 
 JSValue.propTypes = {

@@ -51,7 +51,7 @@ export const SagaMonitorBody = styled.section`
 `
 
 export const FilterEffect = styled.input`
-  width: 80px;
+  width: 100px;
   margin: 4px 10px;
 
   &::placeholder {

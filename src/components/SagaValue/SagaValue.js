@@ -3,7 +3,7 @@ import { is, CHANNEL_END } from 'redux-saga/utils'
 import JSValue from '../JSValue'
 import SagaRef from '../../containers/SagaRef'
 
-export default function SagaValue({value, label, isIdentifier}) {
+export default function SagaValue({value, label, isIdentifier, highlighted = false}) {
   if(is.channel(value)) {
     return <SagaRef object={value}>{label || 'Channel'}</SagaRef>
   }
@@ -11,6 +11,6 @@ export default function SagaValue({value, label, isIdentifier}) {
     return <JSValue value={'END'} isIdentifier={true} />
   }
   else {
-    return <JSValue value={value} label={label} isIdentifier={isIdentifier} />
+    return <JSValue value={value} label={label} isIdentifier={isIdentifier} renderRaw={highlighted} />
   }
 }

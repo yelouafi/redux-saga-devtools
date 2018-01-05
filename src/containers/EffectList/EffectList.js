@@ -153,6 +153,7 @@ class EffectList extends React.Component {
           selected={this.props.selectedEffectId === effectId}
           pinned={this.props.pinnedEffectId === effectId}
           collapsed={this.isCollapsed(effectId)}
+          filter={this.props.filter.word}
           passFilter={this.isFiltered(effectId)}
           onCollapse={this.collapseEffect}
           onPin={this.props.onPin}

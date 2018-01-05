@@ -64,7 +64,7 @@ class EffectList extends React.Component {
       })
     }
 
-    return data.name && data.name.toLowerCase().includes(filter.word.toLowerCase())
+    return typeof data.name === 'string' && data.name.toLowerCase().includes(filter.word.toLowerCase())
   }
 
   collapseEffect = (effectId, collapsed) => {

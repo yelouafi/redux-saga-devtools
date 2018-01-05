@@ -51,9 +51,9 @@ class Effect extends React.Component {
       nodes = nodes.concat(
         renderEffectType('take'),
         <SagaValue
-          value={this.highlightText(data.pattern || data.channel)}
+          value={data.pattern || data.channel}
           isIdentifier={true}
-          highlighted={true}
+          highlighter={this.highlightText}
         />,
         this.renderResult(status, result, error, winner)
       )
@@ -63,10 +63,9 @@ class Effect extends React.Component {
       nodes = nodes.concat(
         renderEffectType('put'),
         <SagaValue
-          value={this.highlightText(data.channel || data.action)}
-          label={this.highlightText(data.action.type)}
+          value={data.channel || data.action}
+          label={data.action.type}
           isIdentifier={true}
-          highlighted={true}
         />
       )
     }
@@ -98,7 +97,12 @@ class Effect extends React.Component {
     else if((data = asEffect.join(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('join'),
-        <SagaValue value={data} isIdentifier={true} label={this.highlightText(data.name)} />,
+        <SagaValue
+          value={data}
+          isIdentifier={true}
+          label={data.name}
+          highlighter={this.highlightText}
+        />,
         this.renderResult(status, result, error, winner)
       )
     }
@@ -106,7 +110,12 @@ class Effect extends React.Component {
     else if((data = asEffect.cancel(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('cancel'),
-        <SagaValue value={data} isIdentifier={true} label={this.highlightText(data.name)} />,
+        <SagaValue
+          value={data}
+          isIdentifier={true}
+          label={data.name}
+          highlighter={this.highlightText}
+        />,
       )
     }
 
@@ -127,7 +136,7 @@ class Effect extends React.Component {
     else if((data = asEffect.select(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('select'),
-        renderFuncCall(data.selector, data.args),
+        renderFuncCall(data.selector, data.args, this.highlightText),
         this.renderResult(status, result, error, winner)
       )
     }

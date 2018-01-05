@@ -26,7 +26,6 @@ class Effect extends React.Component {
     const {effect} = this.props
     const { status, result, error, winner } = effect
 
-
     let nodes = []
     let data
 

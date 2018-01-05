@@ -50,6 +50,7 @@ export function effectsById(state = {}, action) {
   switch (action.type) {
     case EFFECT_TRIGGERED:
       effect = action.effect
+      console.log(effect)
       effectId = effect.effectId
       newState = {...state,
         [effectId]: {

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled, { css } from 'styled-components'
 import { connect } from 'react-redux'
+import { asEffect } from 'redux-saga/utils'
 import { matchCurrentAction } from '../../store/selectors'
 import {
   KEY_ARROW_DOWN,
@@ -25,14 +26,47 @@ const cssMatchAction = css`
   margin-top: -1px;
 `
 
+const effectTypes = ['take', 'put', 'fork', 'call', 'cps', 'join', 'cancel']
+
 class EffectList extends React.Component {
 
   state = {
-    collapsedEffects: {}
+    collapsedEffects: {},
+    filter: { word: 'a', type: undefined }
   }
 
   isCollapsed = effectId => {
     return !!this.state.collapsedEffects[effectId]
+  }
+
+  isFiltered = effectId => {
+    const { filter } = this.state
+
+    if (!filter.word) return true
+
+    let data = {}, description
+    const effect = this.props.effectsById[effectId]
+
+    if (effect.root) {
+      data = { type: 'root', name: effect.effect.saga.name }
+    }
+
+    else {
+      effectTypes.forEach(type => {
+        if (description = asEffect[type](effect.effect)) {
+          data = {
+            type,
+            name: description.pattern
+              || description.channel
+              || description.action
+              || (description.fn && description.fn.name)
+          }
+        }
+      })
+    }
+
+    console.log(data)
+    return data.name && data.name.toLowerCase().includes(filter.word.toLowerCase())
   }
 
   collapseEffect = (effectId, collapsed) => {
@@ -121,6 +155,7 @@ class EffectList extends React.Component {
           selected={this.props.selectedEffectId === effectId}
           pinned={this.props.pinnedEffectId === effectId}
           collapsed={this.isCollapsed(effectId)}
+          passFilter={this.isFiltered(effectId)}
           onCollapse={this.collapseEffect}
           onPin={this.props.onPin}
           onUnpin={this.props.onUnpin}

@@ -28,6 +28,7 @@ class ListView extends React.Component {
   render() {
     const indent = this.props.indent || DEFAULT_INDENT
 
+    console.log(this.props.nodes);
     return (
       <ListViewContainer>
         { this.props.nodes.map(node => {

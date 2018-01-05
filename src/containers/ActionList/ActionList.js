@@ -21,7 +21,6 @@ class ActionEntry extends React.Component {
 
   render() {
     const {action } = this.props
-    console.log(action.action.type)
 
     return (
       <ActionEntryContainer onClick={this.onSelect}>

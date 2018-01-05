@@ -48,9 +48,10 @@ class EffectEntry extends React.Component {
   onUnpin = () => this.props.onUnpin(-1)
 
   render() {
-    const {effect, collapsed, pinned, hasChildren} = this.props
+    const {effect, collapsed, pinned, hasChildren, passFilter} = this.props
 
     let pinNode
+    console.log(effect)
     if(!effect.root) {
       pinNode = (
         pinned
@@ -60,6 +61,7 @@ class EffectEntry extends React.Component {
     }
 
     return (
+      passFilter ?
       <EffectEntryContainer>
         <Row onMouseDown={this.onSelect}>
           <Cell>
@@ -88,6 +90,8 @@ class EffectEntry extends React.Component {
           )
         }
       </EffectEntryContainer>
+      :
+      null
     )
   }
 }
@@ -99,6 +103,7 @@ EffectEntry.propTypes = {
   collapsed: PropTypes.bool.isRequired,
   onCollapse: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
+  passFilter: PropTypes.bool.isRequired,
   // injected by Redux store
   effect: PropTypes.object.isRequired,
   hasChildren: PropTypes.bool.isRequired,

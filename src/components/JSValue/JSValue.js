@@ -12,7 +12,7 @@ import {
 const vnull = <VNull />
 const vfuncKeyword = <Keyword>function</Keyword>
 
-function renderValue(value, isIdentifier, label, highlighter, onlyPrimitive) {
+function renderValue(value, isIdentifier, label, onlyPrimitive, highlighter = val => val) {
 
   if(value === null || value === undefined) {
     return vnull
@@ -66,7 +66,7 @@ function getObjectSummary(obj) {
 }
 
 function JSValue({value, isIdentifier, label, highlighter = val => val}) {
-  return renderValue(value, isIdentifier, label, highlighter, false)
+  return renderValue(value, isIdentifier, label, false, highlighter)
 }
 
 JSValue.propTypes = {

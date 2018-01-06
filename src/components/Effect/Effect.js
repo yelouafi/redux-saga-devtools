@@ -21,7 +21,7 @@ class Effect extends React.Component {
   highlightFilter = (text) => {
     const highlight = this.props.filter
     const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
-    
+
     return <span>{parts.map((part, i) =>
         <span key={i} style={part.toLowerCase() === highlight.toLowerCase() ? { fontWeight: 'bold', background: '#ffcc00' } : {} }>
             {part}
@@ -66,6 +66,7 @@ class Effect extends React.Component {
           value={data.channel || data.action}
           label={data.action.type}
           isIdentifier={true}
+          highlighter={this.highlightFilter}
         />
       )
     }
@@ -144,7 +145,11 @@ class Effect extends React.Component {
     else if((data = asEffect.actionChannel(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('actionChannel'),
-        <SagaValue value={data.action} isIdentifier={true} />,
+        <SagaValue
+          value={data.action}
+          isIdentifier={true}
+          highlighter={this.highlightFilter}
+        />,
         this.renderResult(status, result, error, winner)
       )
     }

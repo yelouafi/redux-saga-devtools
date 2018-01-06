@@ -12,7 +12,7 @@ import {
 const vnull = <VNull />
 const vfuncKeyword = <Keyword>function</Keyword>
 
-function renderValue(value, isIdentifier, label, onlyPrimitive) {
+function renderValue(value, isIdentifier, label, onlyPrimitive, highlighter = val => val) {
 
   if(value === null || value === undefined) {
     return vnull
@@ -25,9 +25,9 @@ function renderValue(value, isIdentifier, label, onlyPrimitive) {
   const type = typeof value
   if(type === 'string') {
     if(isIdentifier) {
-      return <Identifier>{value}</Identifier>
+      return <Identifier>{highlighter(value)}</Identifier>
     } else {
-      return <VQuoted>'{value}'</VQuoted>
+      return <VQuoted>'{highlighter(value)}'</VQuoted>
     }
   }
   if(
@@ -35,14 +35,14 @@ function renderValue(value, isIdentifier, label, onlyPrimitive) {
     type === 'number'   ||
     type === 'boolean'
   ) {
-    return <VUnquoted>{String(value)}</VUnquoted>
+    return <VUnquoted>{highlighter(String(value))}</VUnquoted>
   }
 
   else if(type === 'function') {
     return (
       <VFunction>
         {vfuncKeyword}
-        {value.name}()
+        {highlighter(value.name)}()
       </VFunction>
     )
   }
@@ -52,7 +52,7 @@ function renderValue(value, isIdentifier, label, onlyPrimitive) {
       <Identifier>{label}</Identifier>
     }
     return (
-      <JSObject data={value} preview={label} />
+      <JSObject data={value} preview={label} highlighter={highlighter} />
     )
   }
 }
@@ -65,17 +65,18 @@ function getObjectSummary(obj) {
   )
 }
 
-function JSValue({value, isIdentifier, label}) {
-  return renderValue(value, isIdentifier, label, false)
+function JSValue({value, isIdentifier, label, highlighter = val => val}) {
+  return renderValue(value, isIdentifier, label, false, highlighter)
 }
 
 JSValue.propTypes = {
   value: PropTypes.any,
   isIdentifier: PropTypes.bool,
   label: PropTypes.any,
+  highlighter: PropTypes.func,
 }
 
-export function JSObject({data, renderLabel, preview, ignoreLabelClick}) {
+export function JSObject({data, renderLabel, preview, ignoreLabelClick, highlighter = val => val}) {
   const keys = Object.keys(data)
   if(!keys.length) {
     return renderLabel ? renderLabel() : <span>'{}'</span>
@@ -137,6 +138,7 @@ JSObject.propTypes = {
   renderLabel: PropTypes.func,
   preview: PropTypes.any,
   ignoreLabelClick: PropTypes.bool,
+  highlighter: PropTypes.func,
 }
 
 export default JSValue

@@ -49,3 +49,20 @@ export const SagaMonitorBody = styled.section`
   bottom: 0;
   width: 100%;
 `
+
+export const FilterEffect = styled.input`
+  width: 100px;
+  margin: 4px 10px;
+
+  &::placeholder {
+    padding-left: 4px;
+  }
+`
+
+export const FilterDropdown = styled.select`
+  width: 60px;
+`
+
+export const FilterOption = styled.option`
+  width: 30px;
+`

@@ -18,15 +18,15 @@ class Effect extends React.Component {
 
   effectId = this.props.effect.effectId
 
-  highlightText = (text) => {
+  highlightFilter = (text) => {
     const highlight = this.props.filter
-    // Split on higlight term and include term into parts, ignore case
-    let parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-    return <span> { parts.map((part, i) =>
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
+    
+    return <span>{parts.map((part, i) =>
         <span key={i} style={part.toLowerCase() === highlight.toLowerCase() ? { fontWeight: 'bold', background: '#ffcc00' } : {} }>
-            { part }
+            {part}
         </span>)
-    } </span>;
+    } </span>
   }
 
   renderResult(status, result, error, winner) {
@@ -42,7 +42,7 @@ class Effect extends React.Component {
 
     if(effect.root) {
       nodes = nodes.concat(
-        renderFuncCall(effect.effect.saga, effect.effect.args, this.highlightText),
+        renderFuncCall(effect.effect.saga, effect.effect.args, this.highlightFilter),
         this.renderResult(status, result, error)
       )
     }
@@ -53,7 +53,7 @@ class Effect extends React.Component {
         <SagaValue
           value={data.pattern || data.channel}
           isIdentifier={true}
-          highlighter={this.highlightText}
+          highlighter={this.highlightFilter}
         />,
         this.renderResult(status, result, error, winner)
       )
@@ -73,7 +73,7 @@ class Effect extends React.Component {
     else if((data = asEffect.call(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('call'),
-        renderFuncCall(data.fn, data.args, this.highlightText),
+        renderFuncCall(data.fn, data.args, this.highlightFilter),
         this.renderResult(status, result, error, winner)
       )
     }
@@ -89,7 +89,7 @@ class Effect extends React.Component {
     else if((data = asEffect.fork(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('fork'),
-        renderFuncCall(data.fn, data.args, this.highlightText),
+        renderFuncCall(data.fn, data.args, this.highlightFilter),
         this.renderResult(status, result, error, winner)
       )
     }
@@ -101,7 +101,7 @@ class Effect extends React.Component {
           value={data}
           isIdentifier={true}
           label={data.name}
-          highlighter={this.highlightText}
+          highlighter={this.highlightFilter}
         />,
         this.renderResult(status, result, error, winner)
       )
@@ -114,7 +114,7 @@ class Effect extends React.Component {
           value={data}
           isIdentifier={true}
           label={data.name}
-          highlighter={this.highlightText}
+          highlighter={this.highlightFilter}
         />,
       )
     }
@@ -136,7 +136,7 @@ class Effect extends React.Component {
     else if((data = asEffect.select(effect.effect))) {
       nodes = nodes.concat(
         renderEffectType('select'),
-        renderFuncCall(data.selector, data.args, this.highlightText),
+        renderFuncCall(data.selector, data.args, this.highlightFilter),
         this.renderResult(status, result, error, winner)
       )
     }

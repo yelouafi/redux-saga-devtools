@@ -64,8 +64,8 @@ class EffectView extends React.Component {
 
 
   render() {
-    const rootEffectIds = this.props.rootEffectIds
-    const filter = this.props.filter
+    const {rootEffectIds, filter, setFilterOptions} = this.props
+
     const selectedEffectId = this.state.selectedEffectId
     const pinnedEffectId = this.state.pinnedEffectId
 
@@ -80,6 +80,7 @@ class EffectView extends React.Component {
             onPin={this.handlePin}
             onUnpin={this.handleUnpin}
             filter={filter}
+            setFilterOptions={setFilterOptions}
           />
         </EffectViewBody>
         <EffectViewFooter>
@@ -97,6 +98,7 @@ class EffectView extends React.Component {
 EffectView.propTypes = {
   rootEffectIds: PropTypes.array.isRequired,
   filter: PropTypes.object.isRequired,
+  // setFilterOptions: PropTypes.func.isRequired,
   // Inject by Redux
   effectsById: PropTypes.object.isRequired
 }

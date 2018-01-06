@@ -10,7 +10,9 @@ import {
   SagaMonitorHeader,
   SagaMonitorOption,
   SagaMonitorBody,
-  FilterEffect
+  FilterEffect,
+  FilterDropdown,
+  FilterOption
 } from './styles'
 
 const EFFECT_VIEW = 'Effects'
@@ -24,7 +26,8 @@ class SagaMonitorView extends React.Component {
   state = {
     currentView: EFFECT_VIEW,
     currentViewIndex: 0,
-    filter: { word: '', type: undefined }
+    filter: { word: '', type: undefined },
+    filterOptions: []
   }
 
   viewHandlers = {
@@ -33,13 +36,43 @@ class SagaMonitorView extends React.Component {
   }
 
   updateFilter = () => this.setState(({ filter }) => (
-    { filter: { ...filter, word: this.filter.value } }
+    { filter: { word: this.filterWord.value, type: this.filterType.value } }
   ))
+
+  setFilterOptions = (items, { allCaps }) => {
+    const options = items.map(item => {
+      let label, value
+
+      if(typeof item === 'object') {
+        label = item.option || item.value
+        value = item.value
+      }
+      else if(typeof item === 'string') {
+        label = item
+        value = item
+      }
+
+      if (allCaps) label = label.toUpperCase()
+
+      return { label, value }
+
+    })
+  
+    this.setState({ filterOptions: options })
+  }
+
+  renderFilterOptions = () => this.state.filterOptions.map(option => {
+    return <FilterOption key={option.value} value={option.value}>{option.label}</FilterOption>
+  })
 
   renderCurrentView() {
     switch (this.state.currentView) {
       case EFFECT_VIEW:
-        return <EffectView rootEffectIds={this.props.rootEffectIds} filter={this.state.filter} />
+        return <EffectView
+          rootEffectIds={this.props.rootEffectIds}
+          filter={this.state.filter}
+          setFilterOptions={this.setFilterOptions}
+        />
       case ACTION_VIEW:
         return <ActionView />
       default:
@@ -70,9 +103,16 @@ class SagaMonitorView extends React.Component {
               {this.renderViewOption(ACTION_VIEW)}
               <FilterEffect
                 onChange={this.updateFilter}
-                innerRef={filter => this.filter = filter}
+                innerRef={filter => this.filterWord = filter}
                 placeholder="filter..."
               />
+              <FilterDropdown
+                onChange={this.updateFilter}
+                innerRef={filter => this.filterType = filter}
+              >
+                <FilterOption value="">none</FilterOption>
+                {this.renderFilterOptions()}
+              </FilterDropdown>
               <hr style={{ width: OPTION_WIDTH, left: OPTION_WIDTH * this.state.currentViewIndex }} />
             </Row>
           </SagaMonitorHeader>

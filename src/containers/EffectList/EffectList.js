@@ -26,7 +26,7 @@ const cssMatchAction = css`
   margin-top: -1px;
 `
 
-const effectTypes = ['take', 'put', 'fork', 'call', 'cps', 'join', 'cancel']
+const EFFECT_TYPES = ['take', 'put', 'fork', 'call', 'cps', 'join', 'cancel']
 
 class EffectList extends React.Component {
 
@@ -34,14 +34,18 @@ class EffectList extends React.Component {
     collapsedEffects: {}
   }
 
+  componentDidMount() {
+    this.props.setFilterOptions(EFFECT_TYPES, { allCaps: true })
+  }
+
   isCollapsed = effectId => {
     return !!this.state.collapsedEffects[effectId]
   }
 
-  isFiltered = effectId => {
+  passFilter = effectId => {
     const { filter } = this.props
 
-    if (!filter.word) return true
+    if (!filter.word && !filter.type) return true
 
     let data = {}, description
     const effect = this.props.effectsById[effectId]
@@ -50,21 +54,23 @@ class EffectList extends React.Component {
       data = { type: 'root', name: effect.effect.saga.name }
     }
 
-    else {
-      effectTypes.forEach(type => {
+    else { // Currently only filters those with string data.name
+      EFFECT_TYPES.forEach(type => {
         if (description = asEffect[type](effect.effect)) {
           data = {
             type,
             name: description.pattern
-              || description.channel
-              || description.action
-              || (description.fn && description.fn.name)
+               || description.channel
+               || description.action
+               || (description.fn && description.fn.name)
           }
         }
       })
     }
 
-    return typeof data.name === 'string' && data.name.toLowerCase().includes(filter.word.toLowerCase())
+    return typeof data.name === 'string'
+           && data.name.toLowerCase().includes(filter.word.toLowerCase())
+           && (!filter.type || data.type === filter.type)
   }
 
   collapseEffect = (effectId, collapsed) => {
@@ -154,7 +160,7 @@ class EffectList extends React.Component {
           pinned={this.props.pinnedEffectId === effectId}
           collapsed={this.isCollapsed(effectId)}
           filter={this.props.filter.word}
-          passFilter={this.isFiltered(effectId)}
+          passFilter={this.passFilter(effectId)}
           onCollapse={this.collapseEffect}
           onPin={this.props.onPin}
           onUnpin={this.props.onUnpin}
@@ -189,6 +195,7 @@ EffectList.propTypes = {
   onSelectionChange: PropTypes.func.isRequired,
   rootEffectIds: PropTypes.array.isRequired,
   filter: PropTypes.object.isRequired,
+  setFilterOptions: PropTypes.func.isRequired,
   // Injected by redux
   effectsById: PropTypes.object.isRequired,
   effectsByParentId: PropTypes.object.isRequired,

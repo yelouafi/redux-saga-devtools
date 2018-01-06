@@ -58,3 +58,11 @@ export const FilterEffect = styled.input`
     padding-left: 4px;
   }
 `
+
+export const FilterDropdown = styled.select`
+  width: 60px;
+`
+
+export const FilterOption = styled.option`
+  width: 30px;
+`

@@ -19,8 +19,7 @@ const store = createStore(
 )
 sagaMiddleware.run(rootSaga)
 sagaMiddleware.run(function* anotherSaga() {
-  // yield taake('SOMETHING') // THIS IS INTENTIONAL. Simulate an error on the devtools
-  yield take('SOMETHING') // Try omit the intentional error
+  yield taake('SOMETHING') // THIS IS INTENTIONAL. Simulate an error on the devtools
 })
 
 

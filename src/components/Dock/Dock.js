@@ -1,5 +1,7 @@
 import React from 'react'
 import Divider from '../Divider'
+import MenuDropdown from '../MenuDropdown'
+import { IconMenu } from '../Icons'
 import {
     cssResize,
     DockContainer,
@@ -16,9 +18,10 @@ class Dock extends React.Component {
     node = null
 
     state = {
-        visible: false,
+        visible: true,
         width: 500,
-        isResizing: false
+        isResizing: false,
+        position: 'right'
     }
 
     handleKeyUp = (e) => ((e.keyCode === KEY_CODE_F9) ? this.onToggleDock() : null)  //F9
@@ -32,6 +35,8 @@ class Dock extends React.Component {
             return {visible: !state.visible}
         })
     }
+
+    setPosition = (position) => this.setState({ position })
 
     onResizeStart = () => {
         this.widthOrigin = this.state.width
@@ -51,17 +56,36 @@ class Dock extends React.Component {
     }
 
     render() {
+        let width
+
+        switch (this.state.position) {
+            case 'right':
+            case 'left':
+                width = this.state.width
+                break;
+            case 'bottom':
+                width = '100%'
+        }
+
         const style = {
-            width: this.state.visible ? this.state.width : 0
+            width: this.state.visible ? width : 0
         }
 
         return (
             <DockContainer>
-                <DockPanel resizing={this.state.isResizing} style={style}>
+                <DockPanel
+                    resizing={this.state.isResizing}
+                    style={style}
+                    position={this.state.position}
+                >
                     <DockOverlay />
+                    <MenuDropdown
+                        position={this.state.position}
+                        setPosition={this.setPosition}
+                    />
                     {this.state.visible ? <DockToggle onClick={this.onToggleDock}>Toggle</DockToggle> : null}
                     <Divider
-                        css={cssResize}
+                        css={cssResize(this.state.position)}
                         onResizeStart={this.onResizeStart}
                         onResize={this.onResize}
                         onResizeEnd={this.onResizeEnd}

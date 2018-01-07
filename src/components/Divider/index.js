@@ -7,8 +7,8 @@ export const DividerContainer = styled.div`
   ${ p => p.css }
 `
 
-const HORIZONTAL = Symbol('DIVIDER_HORIZONTAL')
-const VERTICAL = Symbol('DIVIDER_VERTICAL')
+export const HORIZONTAL = Symbol('DIVIDER_HORIZONTAL')
+export const VERTICAL = Symbol('DIVIDER_VERTICAL')
 
 class Divider extends React.Component {
 

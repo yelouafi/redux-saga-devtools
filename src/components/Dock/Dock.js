@@ -1,5 +1,5 @@
 import React from 'react'
-import Divider from '../Divider'
+import Divider, { VERTICAL, HORIZONTAL } from '../Divider'
 import MenuDropdown from '../MenuDropdown'
 import { IconMenu } from '../Icons'
 import {
@@ -48,6 +48,8 @@ class Dock extends React.Component {
     }
 
     onResize = deltaX => {
+        if (this.state.position === 'left') deltaX = -deltaX
+
         this.setState(state => {
             return {
                 width: Math.max(0, this.widthOrigin + deltaX)
@@ -56,19 +58,22 @@ class Dock extends React.Component {
     }
 
     render() {
-        let width
+        let width, height
 
         switch (this.state.position) {
             case 'right':
             case 'left':
                 width = this.state.width
+                height = '100%'
                 break;
             case 'bottom':
                 width = '100%'
+                height = this.state.width
         }
 
         const style = {
-            width: this.state.visible ? width : 0
+            width: this.state.visible ? width : 0,
+            height: this.state.visible ? height : 0
         }
 
         return (
@@ -89,6 +94,7 @@ class Dock extends React.Component {
                         onResizeStart={this.onResizeStart}
                         onResize={this.onResize}
                         onResizeEnd={this.onResizeEnd}
+                        orientation={this.state.position === 'bottom' ? HORIZONTAL : VERTICAL}
                     />
                     <DockPanelBody>
                         {this.props.children}

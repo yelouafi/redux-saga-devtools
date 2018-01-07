@@ -5,6 +5,7 @@ const resizeLeft = css`
   width: 10px;
   top: 0;
   height: 100%;
+  cursor: col-resize;
 `
 
 const resizeRight = css`
@@ -12,6 +13,7 @@ const resizeRight = css`
   width: 10px;
   top: 0;
   height: 100%;
+  cursor: col-resize;
 `
 
 const resizeTop = css`
@@ -19,12 +21,13 @@ const resizeTop = css`
   height: 10px;
   left: 0;
   width: 100%;
+  cursor: row-resize;
 `
 
 export const cssResize = (pos) => css`
   position: absolute;
   opacity: 0;
-  cursor: col-resize;
+
   ${pos === 'right' ? resizeLeft :
     pos === 'left' ? resizeRight :
     resizeTop // pos === 'bottom'

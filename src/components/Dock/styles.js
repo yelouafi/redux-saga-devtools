@@ -1,13 +1,37 @@
 import styled, { css } from 'styled-components'
 
-export const cssResize = css`
-  position: absolute;
-  opacity: 0;
+const resizeLeft = css`
   left: -5px;
   width: 10px;
   top: 0;
   height: 100%;
   cursor: col-resize;
+`
+
+const resizeRight = css`
+  right: -5px;
+  width: 10px;
+  top: 0;
+  height: 100%;
+  cursor: col-resize;
+`
+
+const resizeTop = css`
+  top: -5px;
+  height: 10px;
+  left: 0;
+  width: 100%;
+  cursor: row-resize;
+`
+
+export const cssResize = (pos) => css`
+  position: absolute;
+  opacity: 0;
+
+  ${pos === 'right' ? resizeLeft :
+    pos === 'left' ? resizeRight :
+    resizeTop // pos === 'bottom'
+  }
 `
 
 export const DockContainer = styled.div`
@@ -32,11 +56,11 @@ export const DockOverlay = styled.div`
 `
 
 export const DockToggle = styled.button`
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
   z-index: 1;
-  margin: 2px;
+  margin: 3px;
 `
 
 export const DockPanel = styled.div`
@@ -44,10 +68,24 @@ export const DockPanel = styled.div`
   z-index: 1;
   box-shadow: rgba(0, 0, 0, 0.298039) 0px 0px 4px;
   background: white;
-  right: 0;
-  top: 0px;
-  width: 40%;
-  height: 100%;
+  bottom: 0;
+
+  ${p => p.position === 'bottom' ?
+      css`
+        left: 0;
+        height: 400px;
+      `:
+    p.position === 'left' ?
+      css`
+        left: 0;
+        height: 100%;
+      `:
+    // p.position === 'right'
+      css`
+        right: 0;
+        height: 100%;
+      `
+	}
 
   ${p => p.resizing ?
       css`

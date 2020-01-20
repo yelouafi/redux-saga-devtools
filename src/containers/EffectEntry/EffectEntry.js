@@ -109,7 +109,7 @@ export default connect(
     const effect = state.effectsById[effectId]
     return {
       effect,
-      hasChildren: state.effectsByParentId[effectId]
+      hasChildren: !!state.effectsByParentId[effectId]
     }
   }
 )(EffectEntry)

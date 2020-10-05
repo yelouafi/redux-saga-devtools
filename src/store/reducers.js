@@ -1,4 +1,5 @@
 import { asEffect } from "redux-saga/utils";
+import immer from "immer";
 import { combineReducers } from "redux";
 import {
   EFFECT_TRIGGERED,
@@ -51,20 +52,19 @@ export function effectsById(state = {}, action) {
     case EFFECT_TRIGGERED:
       effect = action.effect;
       effectId = effect.effectId;
-      newState = {
-        ...state,
-        [effectId]: {
-          ...effect,
-          status: STATUS_PENDING,
-          start: action.time,
-          path: effect.parentEffectId
-            ? getPathToEffect(effect, state)
-            : [effectId],
-          [CHILDREN]: []
-        }
-      };
+      newState = immer(state, (draftState) => {
+        draftState[effectId] = {
+            ...effect,
+            status: STATUS_PENDING,
+            start: action.time,
+            path: effect.parentEffectId
+                ? getPathToEffect(effect, state)
+                : [effectId],
+            [CHILDREN]: []
+        };
+      });
       /**
-        ugly  hack. store children along with the effects
+        ugly hack. store children along with the effects
         this shouldn't be accessed by any other outside UI
         it's only there so the maybeSetRaceWinner could access race's children
       **/
@@ -77,23 +77,20 @@ export function effectsById(state = {}, action) {
     case EFFECT_RESOLVED:
       effectId = action.effectId;
       effect = state[effectId];
-      newState = {
-        ...state,
-        [effectId]: settleEffect(effect, action)
-      };
+      newState = immer(state, (draftState) => {
+        draftState[effectId] = settleEffect(effect, action);
+      });
       return maybeSetRaceWinner(effect, action.result, newState);
     case EFFECT_REJECTED:
       effectId = action.effectId;
-      return {
-        ...state,
-        [effectId]: settleEffect(state[effectId], action, true)
-      };
+      return immer(state, (draftState) => {
+        draftState[effectId] = settleEffect(state[effectId], action, true);
+      });
     case EFFECT_CANCELLED:
       effectId = action.effectId;
-      return {
-        ...state,
-        [effectId]: cancelEffect(state[effectId], action)
-      };
+      return immer(state, (draftState) => {
+        draftState[effectId] = cancelEffect(state[effectId], action);
+      });
     default:
       return state;
   }
@@ -125,12 +122,11 @@ export function effectsByParentId(state = {}, action) {
     const parentId = effect.parentEffectId;
     if (parentId) {
       const siblings = state[parentId];
-      return {
-        ...state,
-        [parentId]: !siblings
-          ? [effect.effectId]
-          : [...siblings, effect.effectId]
-      };
+      return immer(state, (draftState) => {
+        draftState[parentId] = !siblings
+            ? [effect.effectId]
+            : [...siblings, effect.effectId];
+      });
     }
   }
   return state;
@@ -165,7 +161,9 @@ export function dispatchedActions(state = [], monitorAction) {
 
 export function sharedRef(state = {}, action) {
   if (action.type === SET_SHARED_REF) {
-    return { ...state, [action.key]: action.sharedRef };
+    return immer(state, (draftState) => {
+      draftState[action.key] = action.sharedRef;
+    });
   }
   return state;
 }

@@ -77,9 +77,10 @@ export function effectsById(state = {}, action) {
     case EFFECT_RESOLVED:
       effectId = action.effectId;
       effect = state[effectId];
-      newState = immer(state, (draftState) => {
-        draftState[effectId] = settleEffect(effect, action);
-      });
+      newState = {
+        ...state,
+        [effectId]: settleEffect(effect, action)
+      };
       return maybeSetRaceWinner(effect, action.result, newState);
     case EFFECT_REJECTED:
       effectId = action.effectId;
